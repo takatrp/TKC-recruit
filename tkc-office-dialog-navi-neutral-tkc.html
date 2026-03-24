@@ -1,0 +1,842 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>事務所づくり対話ナビ｜共有画面版</title>
+  <style>
+    :root{
+      --bg:#f5f7fb;
+      --card:#ffffff;
+      --line:#dbe3f0;
+      --text:#1b2430;
+      --muted:#5b6678;
+      --brand:#2158a8;
+      --brand-2:#0f3f85;
+      --soft:#eef4ff;
+      --soft-2:#f7faff;
+      --green:#eaf6ee;
+      --green-line:#cfe8d8;
+      --amber:#fff7e9;
+      --amber-line:#f0ddb0;
+      --shadow:0 10px 28px rgba(12,24,48,.08);
+      --radius:20px;
+    }
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{
+      margin:0;
+      font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Hiragino Kaku Gothic ProN","Hiragino Sans","Yu Gothic UI","Yu Gothic",Meiryo,sans-serif;
+      background:linear-gradient(180deg,#f7f9fc 0%,#f2f5fa 100%);
+      color:var(--text);
+      line-height:1.6;
+    }
+    .wrap{max-width:1180px;margin:0 auto;padding:20px 16px 56px}
+    .hero{
+      background:linear-gradient(135deg,#173a72 0%,#2158a8 58%,#3f7bd1 100%);
+      color:#fff;
+      border-radius:26px;
+      padding:28px 24px;
+      box-shadow:var(--shadow);
+      margin-bottom:18px;
+    }
+    .eyebrow{
+      display:inline-block;
+      padding:6px 10px;
+      border-radius:999px;
+      background:rgba(255,255,255,.14);
+      font-size:12px;
+      letter-spacing:.04em;
+      margin-bottom:12px;
+    }
+    .hero h1{margin:0 0 10px;font-size:clamp(28px,4vw,42px);line-height:1.15}
+    .hero p{margin:0;color:rgba(255,255,255,.92);max-width:860px}
+    .hero-grid{display:grid;grid-template-columns:1.3fr .9fr;gap:14px;margin-top:18px}
+    .hero-card{
+      background:rgba(255,255,255,.12);
+      border:1px solid rgba(255,255,255,.18);
+      border-radius:18px;
+      padding:14px 16px;
+      backdrop-filter: blur(8px);
+    }
+    .hero-card strong{display:block;font-size:13px;margin-bottom:4px}
+    .hero-card .small{font-size:13px;color:rgba(255,255,255,.9)}
+
+    .layout{display:grid;grid-template-columns:1fr 1fr;gap:18px;align-items:start}
+    .card{
+      background:var(--card);
+      border:1px solid var(--line);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+      overflow:hidden;
+    }
+    .panel-head{padding:18px 18px 8px;border-bottom:1px solid rgba(219,227,240,.75)}
+    .panel-head h2,.panel-head h3{margin:0;font-size:21px}
+    .panel-head p{margin:6px 0 0;color:var(--muted);font-size:14px}
+    .panel-body{padding:18px}
+
+    .step-list{display:grid;gap:12px}
+    .step{
+      border:1px solid var(--line);
+      border-radius:18px;
+      padding:16px;
+      background:var(--soft-2);
+    }
+    .step-top{display:flex;gap:10px;align-items:flex-start;margin-bottom:10px}
+    .step-no{
+      width:30px;height:30px;border-radius:999px;background:var(--brand);color:#fff;
+      display:grid;place-items:center;font-weight:800;font-size:14px;flex:0 0 auto;
+    }
+    .step h3{margin:0;font-size:17px;line-height:1.35}
+    .step p{margin:2px 0 0;font-size:13px;color:var(--muted)}
+
+    .field{margin-top:10px}
+    .field.compact{margin-top:0}
+    label.main{display:block;font-weight:800;font-size:14px;margin-bottom:6px}
+    input[type="text"], textarea, select{
+      width:100%;padding:12px 14px;border:1px solid #cdd8ea;border-radius:12px;
+      font-size:14px;background:#fff;color:var(--text);
+    }
+    textarea{min-height:84px;resize:vertical}
+
+    .chip-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+    .choice{position:relative}
+    .choice input{position:absolute;opacity:0;pointer-events:none}
+    .choice label{
+      margin:0;border:1px solid #cdd8ea;border-radius:14px;padding:11px 12px;background:#fff;
+      font-weight:700;font-size:14px;cursor:pointer;transition:.18s ease;min-height:48px;
+      display:flex;align-items:center;justify-content:center;text-align:center;
+    }
+    .choice input:checked + label{
+      border-color:var(--brand);background:var(--soft);color:var(--brand-2);
+      box-shadow:0 0 0 3px rgba(33,88,168,.08);
+    }
+
+    .actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}
+    button,.btn{
+      appearance:none;border:none;border-radius:12px;padding:12px 16px;font-weight:800;font-size:14px;
+      cursor:pointer;text-decoration:none;transition:.18s ease;
+    }
+    .btn-primary{background:var(--brand);color:#fff}
+    .btn-primary:hover{background:var(--brand-2)}
+    .btn-secondary{background:#eef2f8;color:#25324a;border:1px solid #d7e0ef}
+    .btn-secondary:hover{background:#e8eef8}
+    .btn-ghost{background:#fff;border:1px dashed #c9d5e9;color:#47566d}
+
+    .summary-intro{
+      padding:14px 16px;border-radius:16px;background:var(--green);border:1px solid var(--green-line);
+      margin-bottom:14px;
+    }
+    .summary-intro strong{display:block;margin-bottom:4px}
+    .badge-row{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0 14px}
+    .badge{
+      display:inline-flex;align-items:center;padding:8px 12px;border-radius:999px;background:var(--soft);
+      color:var(--brand-2);font-weight:800;font-size:13px;
+    }
+    .section{border:1px solid var(--line);border-radius:16px;padding:16px;margin-bottom:14px;background:#fff}
+    .section h4{margin:0 0 10px;font-size:16px}
+    .section p{margin:0 0 10px}
+    .plain-list{margin:0;padding-left:18px}
+    .plain-list li{margin:7px 0}
+    .objection{background:#fafcff;border:1px solid #e4ebf8;border-radius:14px;padding:12px;margin-bottom:10px}
+    .objection strong{display:block;margin-bottom:6px}
+    .callout{padding:14px 16px;border-radius:16px;background:var(--amber);border:1px solid var(--amber-line);margin-bottom:14px}
+    .micro{font-size:12px;color:var(--muted)}
+    .two-col{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    .copy-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+    .result-card{position:sticky;top:16px}
+    .placeholder{padding:24px 18px;color:var(--muted)}
+    details{border:1px solid var(--line);border-radius:14px;padding:12px 14px;background:#fbfcff}
+    summary{cursor:pointer;font-weight:800}
+    .footer-note{margin-top:10px;font-size:12px;color:var(--muted)}
+
+    @media (max-width:980px){
+      .layout,.hero-grid,.two-col{grid-template-columns:1fr}
+      .result-card{position:static}
+    }
+    @media (max-width:640px){
+      .wrap{padding:14px 12px 40px}
+      .hero{padding:22px 18px}
+      .chip-grid{grid-template-columns:1fr}
+      .panel-head{padding:16px 16px 8px}
+      .panel-body{padding:16px}
+      .actions,.copy-row{display:grid;grid-template-columns:1fr}
+      button,.btn{width:100%}
+    }
+    @media print{
+      body{background:#fff}
+      .hero{background:#fff !important;color:#000;border:1px solid #ccc;box-shadow:none}
+      .hero-card,.actions,details{display:none !important}
+      .layout{grid-template-columns:1fr}
+      .card{box-shadow:none;border:1px solid #ccc}
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <section class="hero">
+      <div class="eyebrow">一緒に考えを整理する共有画面版</div>
+      <h1>事務所づくり対話ナビ</h1>
+      <p>先生と一緒に、いまの事務所運営とこれからの方向性を整理するための画面です。結論を急がず、いま気になっている悩みを起点に、月次決算体制・自計化・職員育成・経営助言など、今後の事務所づくりで大切になりやすい論点を自然に確認できる形にしています。</p>
+      <div class="hero-grid">
+        <div class="hero-card">
+          <strong>この画面でやること</strong>
+          <div class="small">ソフトの優劣をその場で決めるためではなく、今の事務所運営で何を優先して整えると前に進みやすいかを一緒に言葉にします。</div>
+        </div>
+        <div class="hero-card">
+          <strong>進め方</strong>
+          <div class="small">左の質問に答えると、右側に「今の事務所づくりで優先度が高そうなテーマ」「次に整理するとよさそうな順番」「考えやすい進め方の例」「よく出やすいご質問への考え方」が表示されます。</div>
+        </div>
+      </div>
+    </section>
+
+    <div class="layout">
+      <section class="card" aria-labelledby="form-title">
+        <div class="panel-head">
+          <h2 id="form-title">1. 事務所の現在地を整理する</h2>
+          <p>ここは先生と一緒に見ながら進める前提です。質問は少なめにし、現状を率直に選びやすい表現にしています。</p>
+        </div>
+        <div class="panel-body">
+          <form id="intakeForm">
+            <div class="step-list">
+              <div class="step">
+                <div class="step-top">
+                  <div class="step-no">1</div>
+                  <div>
+                    <h3>いまの事務所の基本状況</h3>
+                    <p>まずは開業年数と人数感を確認します。</p>
+                  </div>
+                </div>
+                <div class="field compact">
+                  <label class="main" for="officeName">事務所名・先生名（任意）</label>
+                  <input id="officeName" name="officeName" type="text" placeholder="例：○○税理士事務所／山田先生" />
+                </div>
+                <div class="field">
+                  <label class="main" for="yearsOpen">開業年数</label>
+                  <select id="yearsOpen" name="yearsOpen">
+                    <option value="3-5">3年〜5年</option>
+                    <option value="0-2">2年以内</option>
+                    <option value="6-10">6年〜10年</option>
+                    <option value="11+">11年以上</option>
+                  </select>
+                </div>
+                <div class="field">
+                  <label class="main" for="staffCount">職員数（先生ご本人を除く）</label>
+                  <select id="staffCount" name="staffCount">
+                    <option value="1-3">1人〜3人</option>
+                    <option value="0">0人</option>
+                    <option value="4-9">4人〜9人</option>
+                    <option value="10+">10人以上</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="step">
+                <div class="step-top">
+                  <div class="step-no">2</div>
+                  <div>
+                    <h3>いまの業務の重心</h3>
+                    <p>記帳代行や自計化の比率感を選びます。</p>
+                  </div>
+                </div>
+                <div class="field">
+                  <label class="main">記帳代行の比率</label>
+                  <div class="chip-grid">
+                    <div class="choice"><input id="book-high" type="radio" name="bookkeepingRatio" value="high"><label for="book-high">かなり高い</label></div>
+                    <div class="choice"><input id="book-mid" type="radio" name="bookkeepingRatio" value="mid" checked><label for="book-mid">中くらい</label></div>
+                    <div class="choice"><input id="book-low" type="radio" name="bookkeepingRatio" value="low"><label for="book-low">低い</label></div>
+                    <div class="choice"><input id="book-mixed" type="radio" name="bookkeepingRatio" value="mid"><label for="book-mixed">顧問先によって差が大きい</label></div>
+                  </div>
+                </div>
+                <div class="field">
+                  <label class="main">自計化の比率</label>
+                  <div class="chip-grid">
+                    <div class="choice"><input id="jikei-low" type="radio" name="jikeikaRatio" value="low"><label for="jikei-low">低い</label></div>
+                    <div class="choice"><input id="jikei-mid" type="radio" name="jikeikaRatio" value="mid" checked><label for="jikei-mid">中くらい</label></div>
+                    <div class="choice"><input id="jikei-high" type="radio" name="jikeikaRatio" value="high"><label for="jikei-high">高い</label></div>
+                    <div class="choice"><input id="jikei-growing" type="radio" name="jikeikaRatio" value="mid"><label for="jikei-growing">これから増やしたい</label></div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="step">
+                <div class="step-top">
+                  <div class="step-no">3</div>
+                  <div>
+                    <h3>いま気になっているテーマ</h3>
+                    <p>顧問料、採用、AI活用など、いまの関心に近いものを選びます。</p>
+                  </div>
+                </div>
+                <div class="field">
+                  <label class="main">顧問料単価について</label>
+                  <div class="chip-grid">
+                    <div class="choice"><input id="fee-high" type="radio" name="feeIssue" value="high"><label for="fee-high">かなり悩んでいる</label></div>
+                    <div class="choice"><input id="fee-mid" type="radio" name="feeIssue" value="mid" checked><label for="fee-mid">少し悩んでいる</label></div>
+                    <div class="choice"><input id="fee-low" type="radio" name="feeIssue" value="low"><label for="fee-low">大きな悩みはない</label></div>
+                    <div class="choice"><input id="fee-unsure" type="radio" name="feeIssue" value="mid"><label for="fee-unsure">これから考えたい</label></div>
+                  </div>
+                </div>
+                <div class="field">
+                  <label class="main">採用・育成について</label>
+                  <div class="chip-grid">
+                    <div class="choice"><input id="hire-high" type="radio" name="hiringIssue" value="high"><label for="hire-high">かなり悩んでいる</label></div>
+                    <div class="choice"><input id="hire-mid" type="radio" name="hiringIssue" value="mid" checked><label for="hire-mid">少し悩んでいる</label></div>
+                    <div class="choice"><input id="hire-low" type="radio" name="hiringIssue" value="low"><label for="hire-low">大きな悩みはない</label></div>
+                    <div class="choice"><input id="hire-unsure" type="radio" name="hiringIssue" value="mid"><label for="hire-unsure">これから考えたい</label></div>
+                  </div>
+                </div>
+                <div class="field">
+                  <label class="main">AIへの向き合い方</label>
+                  <div class="chip-grid">
+                    <div class="choice"><input id="ai-anxious" type="radio" name="aiView" value="anxious"><label for="ai-anxious">変化の速さは気になる</label></div>
+                    <div class="choice"><input id="ai-curious" type="radio" name="aiView" value="curious" checked><label for="ai-curious">関心はあるが様子を見ている</label></div>
+                    <div class="choice"><input id="ai-active" type="radio" name="aiView" value="active"><label for="ai-active">かなり前向きに取り入れたい</label></div>
+                    <div class="choice"><input id="ai-calm" type="radio" name="aiView" value="calm"><label for="ai-calm">現時点では強い優先テーマではない</label></div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="step">
+                <div class="step-top">
+                  <div class="step-no">4</div>
+                  <div>
+                    <h3>これから強めたい方向</h3>
+                    <p>経営助言や顧問先支援の強化意向を確認します。</p>
+                  </div>
+                </div>
+                <div class="field">
+                  <label class="main">今後、経営助言をどれくらい強めたいか</label>
+                  <div class="chip-grid">
+                    <div class="choice"><input id="adv-high" type="radio" name="advisoryIntent" value="high"><label for="adv-high">かなり強めたい</label></div>
+                    <div class="choice"><input id="adv-mid" type="radio" name="advisoryIntent" value="mid" checked><label for="adv-mid">少しずつ強めたい</label></div>
+                    <div class="choice"><input id="adv-low" type="radio" name="advisoryIntent" value="low"><label for="adv-low">現状維持でよい</label></div>
+                    <div class="choice"><input id="adv-unsure" type="radio" name="advisoryIntent" value="mid"><label for="adv-unsure">まだ整理中</label></div>
+                  </div>
+                </div>
+                <div class="field">
+                  <label class="main">いま一番近いテーマ</label>
+                  <div class="chip-grid">
+                    <div class="choice"><input id="pain-fee" type="radio" name="primaryPain" value="fee"><label for="pain-fee">顧問料単価</label></div>
+                    <div class="choice"><input id="pain-book" type="radio" name="primaryPain" value="bookkeeping"><label for="pain-book">記帳代行負荷</label></div>
+                    <div class="choice"><input id="pain-hire" type="radio" name="primaryPain" value="hiring"><label for="pain-hire">採用・育成</label></div>
+                    <div class="choice"><input id="pain-ai" type="radio" name="primaryPain" value="ai"><label for="pain-ai">AI活用の整理</label></div>
+                    <div class="choice"><input id="pain-adv" type="radio" name="primaryPain" value="advisory"><label for="pain-adv">経営助言強化</label></div>
+                    <div class="choice"><input id="pain-start" type="radio" name="primaryPain" value="new_clients" checked><label for="pain-start">新規獲得・営業</label></div>
+                  </div>
+                </div>
+                <div class="field">
+                  <label class="main" for="software">現在主に使っている会計ソフト</label>
+                  <select id="software" name="software">
+                    <option value="other">その他・複数利用</option>
+                    <option value="freee">freee</option>
+                    <option value="moneyforward">マネーフォワード</option>
+                    <option value="yayoi">弥生</option>
+                    <option value="jdl">JDL</option>
+                    <option value="mjs">MJS</option>
+                  </select>
+                </div>
+                <div class="field">
+                  <label class="main" for="memo">今日、特に整理しておきたいこと（任意）</label>
+                  <textarea id="memo" name="memo" placeholder="例：自計化を進めたいが顧問先がなかなか乗ってこない／職員教育をどう仕組みにするか考えたい など"></textarea>
+                </div>
+              </div>
+            </div>
+
+            <div class="actions">
+              <button class="btn-primary" type="button" id="analyzeBtn">この内容で整理する</button>
+              <button class="btn-secondary" type="button" id="saveBtn">入力を保存</button>
+              <button class="btn-ghost" type="button" id="resetBtn">リセット</button>
+            </div>
+          </form>
+        </div>
+      </section>
+
+      <section class="card result-card" aria-labelledby="result-title">
+        <div class="panel-head">
+          <h2 id="result-title">2. 今の事務所づくりで見えているテーマ</h2>
+          <p>一緒に画面を見ながら話を進めやすいよう、表現はできるだけ中立でやわらかくしています。必要に応じて、悩みに応じた進め方の例もあわせて表示します。</p>
+        </div>
+        <div class="panel-body">
+          <div id="emptyState" class="placeholder">
+            左側の質問に答えて「この内容で整理する」を押すと、ここに現在地と、次に整理するとよさそうな論点が表示されます。
+          </div>
+          <div class="micro">ここで出るのは段階の判定ではなく、いま優先して話し合いたいテーマの整理です。結論を一つに決めるというより、考えやすい進め方の選択肢を並べるためのものです。</div>
+
+          <div id="resultArea" style="display:none">
+            <div class="summary-intro">
+              <strong id="headline">現在のテーマ</strong>
+              <div id="typeSummary">ここに要約が表示されます。</div>
+            </div>
+
+            <div class="badge-row" id="badgeRow"></div>
+
+            <div class="section">
+              <h4>この場で最初に共有したいこと</h4>
+              <p id="openingLine"></p>
+            </div>
+
+            <div class="section">
+              <h4>次に話すとよさそうなテーマ</h4>
+              <ol class="plain-list" id="topPoints"></ol>
+            </div>
+
+            <div class="section">
+              <h4>このテーマで考えやすい進め方（例）</h4>
+              <p class="micro" style="margin-bottom:10px">ここでは結論を押しつけるのではなく、こういう悩みのときに整理しやすい進め方の例を並べています。TKCでは、次のような形で考えやすいことがあります。</p>
+              <ul class="plain-list" id="tkcWays"></ul>
+            </div>
+
+            <div class="callout">
+              <strong>この画面の見方</strong>
+              <div id="sharedReadout">ここでは「良し悪しの判定」ではなく、「何を先に整えると事務所づくりが進みやすいか」を共有しています。</div>
+            </div>
+
+            <div class="section">
+              <h4>よく出るご質問と考え方</h4>
+              <div id="objections"></div>
+            </div>
+
+            <div class="two-col">
+              <div class="section">
+                <h4>このあと確認したいこと</h4>
+                <ul class="plain-list" id="nextActions"></ul>
+              </div>
+              <div class="section">
+                <h4>面談での確認ポイント</h4>
+                <ul class="plain-list" id="checkpoints"></ul>
+              </div>
+            </div>
+
+            <div class="section">
+              <h4>本日の整理メモ（共有用）</h4>
+              <textarea id="sharedSummary" readonly></textarea>
+              <div class="copy-row">
+                <button class="btn-secondary" type="button" id="copySharedBtn">まとめをコピー</button>
+                <button class="btn-secondary" type="button" id="printBtn">印刷</button>
+              </div>
+              <div class="footer-note">その場で共有しやすいよう、やわらかい表現でまとめています。</div>
+            </div>
+
+            <details>
+              <summary>後日の整理用メモ</summary>
+              <div style="margin-top:12px">
+                <div class="section">
+                  <h4>面談メモ</h4>
+                  <textarea id="notesPad"></textarea>
+                  <div class="copy-row">
+                    <button class="btn-secondary" type="button" id="saveNotesBtn">メモを保存</button>
+                  </div>
+                </div>
+                <div class="section">
+                  <h4>フォロー文面たたき台</h4>
+                  <textarea id="followupText"></textarea>
+                  <div class="copy-row">
+                    <button class="btn-secondary" type="button" id="copyFollowBtn">フォロー文面をコピー</button>
+                    <button class="btn-secondary" type="button" id="copyTalkBtn">整理メモをコピー</button>
+                  </div>
+                  <div class="micro">必要に応じて、面談後の整理や共有にお使いください。</div>
+                </div>
+              </div>
+            </details>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <script>
+    const TYPE_CONTENT = {
+      startup: {
+        label: "事務所の土台づくり",
+        summary: "事務所の型や、これからどの方向で伸ばしていくかを早めに整理しておくことが大切になりやすい段階です。",
+        opening: "今は目の前の業務を回すことが最優先になりやすい時期ですが、早い段階で『どんな事務所をつくっていくか』を整理しておくほど、後で無理が出にくくなります。",
+        topPoints: [
+          "『何でも受ける』形から、毎月の数字で顧問先を支える形へどう寄せていくかを整理する。",
+          "月次決算体制と自計化を、事務所の土台としてどう位置づけるかを考える。",
+          "入力業務だけに依存しない顧問価値を、早い段階からどうつくるかを共有する。"
+        ],
+        sharedReadout: "開業初期ほど、個別の効率化だけでなく『どんな事務所をつくるか』を先に整理しておくことが大切になりやすい、という見立てです。",
+        tkcWays: [
+          "月次巡回監査を事務所の基本動作として置き、『毎月関与する事務所』という型を早めに固める。",
+          "自計化を前提にしやすい顧問先から始め、入力代行中心ではない関わり方を少しずつ増やす。",
+          "365日変動損益計算書や継続MASなどを使い、毎月の数字を意思決定支援につなげる流れをつくる。",
+        ],
+        objections: [
+          { q: "まだ売上づくりが先で、そこまで考える余裕がありません。", a: "その感覚は自然です。ただ、最初に方向を決めておくほど、後から無理のある受け方を減らしやすくなります。" },
+          { q: "まずは顧客数を増やすことが先ではないですか。", a: "顧客数は大切ですが、どんな顧客をどう支える事務所にするかが見えていると、単価や働き方も整いやすくなります。" },
+          { q: "今は何でも受けるしかない気もします。", a: "最初はそういう時期があって自然です。ただ、ずっとそのままだと後から抜けにくいので、どこかで型を持つことが大切です。" }
+        ],
+        nextActions: [
+          "今受けている業務の中で、今後の主力にしたいものを整理する。",
+          "毎月の関与で価値を出しやすい顧問先像を言語化する。",
+          "次回は、月次決算体制と顧問価値のつながりを具体化する。"
+        ],
+        checkpoints: [
+          "顧問先を増やすことと、事務所の型づくりを分けて考えられているか。",
+          "入力業務の比率が将来どうなってほしいかのイメージがあるか。",
+          "先生ご自身が『どういう事務所でありたいか』を言葉にできるか。"
+        ]
+      },
+      bookkeeping: {
+        label: "業務配分の見直し",
+        summary: "入力や記帳代行に時間が寄りやすく、今後の時間の使い方や顧問価値の置き方を整理する余地が大きい状態です。",
+        opening: "記帳代行は必要な場面がありますが、そこに業務の重心が寄りすぎると、将来は人手負荷や価格の面で苦しくなりやすいので、配分の見直しが大切になります。",
+        topPoints: [
+          "記帳代行中心の状態から、月次決算と顧問価値中心へどう移っていくかを整理する。",
+          "自計化を進めることが、顧問先の数字の見え方や先生の時間の使い方にどう効くかを共有する。",
+          "『入力を請け負う』価値から『毎月の数字を使って支える』価値へ、少しずつ軸を移せるかを考える。"
+        ],
+        sharedReadout: "ここでは記帳代行の良し悪しを言っているのではなく、今後の業務配分としてこの比率感が合っているかを一緒に見ています。",
+        tkcWays: [
+          "自計化へ移しやすい顧問先から段階的に進め、記帳代行比率を一気にではなく計画的に見直す。",
+          "月次決算体制を整え、入力が終わってからではなく毎月の数字で話せる関わり方へ寄せていく。",
+          "巡回監査・月次決算・比較資料をセットで回し、『数字が早く見えること』を顧問価値として説明しやすくする。",
+        ],
+        objections: [
+          { q: "顧問先が自計化を嫌がることが多いです。", a: "その反応はよくあります。だからこそ、単なる手間の話ではなく、数字が早く見える意味まで伝えることが大切になります。" },
+          { q: "記帳代行を減らすと売上が落ちませんか。", a: "短期的にはそう見えることもありますが、長期的には時間の使い方と顧問価値の説明力が変わってきます。" },
+          { q: "入力を抱えているから顧問先が離れにくい面もあります。", a: "一定の安心感はあります。ただ、それが将来も中心価値かは分けて考えた方がよい場面が増えています。" }
+        ],
+        nextActions: [
+          "自計化へ移しやすい顧問先像を整理する。",
+          "月次で価値を出せる業務の流れを棚卸しする。",
+          "次回は、自計化比率を高める実務イメージを具体化する。"
+        ],
+        checkpoints: [
+          "記帳代行を続ける理由が『顧問先のため』と『事務所都合』のどちらに寄っているか。",
+          "自計化を勧める説明が、手間論だけで終わっていないか。",
+          "先生の時間が本来どこに使われるべきかが見えているか。"
+        ]
+      },
+      fee: {
+        label: "顧問価値の見せ方",
+        summary: "顧問料が上がりにくい時に、提供価値の見せ方や報酬設計を見直す余地がある状態です。",
+        opening: "顧問料が上がりにくい時は、能力の問題というより、『何に対して報酬をいただくのか』の見せ方が、まだ作業寄りになっていることが多いです。",
+        topPoints: [
+          "作業の対価から、月次決算や意思決定支援の対価へどう寄せていくかを整理する。",
+          "顧問料の説明を、申告や入力ではなく毎月の価値で話せるようにする。",
+          "毎月の関わりを通じて、顧問先に見える価値をどう作るかを共有する。"
+        ],
+        sharedReadout: "ここでの論点は『値上げのテクニック』より、顧問料の土台になる価値をどう見せるかです。",
+        tkcWays: [
+          "顧問料の説明軸を、申告や入力そのものではなく、月次決算・巡回監査・毎月の確認機能へ置き直す。",
+          "365日変動損益計算書や比較資料を使い、顧問先が毎月受け取っている価値を見える形にしていく。",
+          "継続MASなども活用しながら、『数字をもとに一緒に考える事務所』という位置づけをつくる。",
+        ],
+        objections: [
+          { q: "顧問先が価格に敏感で、なかなか上げにくいです。", a: "その感覚は自然です。だからこそ、価格だけでなく、毎月どんな価値を提供しているかが説明できるかが大切になります。" },
+          { q: "うちも頑張っているつもりですが、単価に反映しません。", a: "頑張りがあることと、顧問先から見える価値として伝わっていることは別なので、そこを整理する余地があります。" },
+          { q: "結局は地域相場の問題ではないですか。", a: "相場の影響はあります。ただ、相場の中でも説明しやすい価値を持てるかで差は出やすいです。" }
+        ],
+        nextActions: [
+          "今、月次で提供している価値を棚卸しする。",
+          "顧問料が上がりやすい顧問先像を整理する。",
+          "次回は、月次決算と顧問価値の説明を具体化する。"
+        ],
+        checkpoints: [
+          "『申告をする』以外の価値が言語化できているか。",
+          "単価が上がりにくい理由を相場だけで片づけていないか。",
+          "毎月の関わりが、報酬の根拠として見える形になっているか。"
+        ]
+      },
+      hiring: {
+        label: "体制づくりと育成",
+        summary: "採用・教育・品質の平準化がテーマになりやすく、属人化しない体制づくりを考える余地が大きい状態です。",
+        opening: "採用や育成に悩みがある時ほど、個人の頑張りで回すのではなく、仕事の型や品質の基準があるかどうかが大切になります。",
+        topPoints: [
+          "人を増やす前に、仕事の流れや基準をどこまで型にできるかを整理する。",
+          "月次決算体制を軸に、職員が育ちやすい仕事の構造をつくれるかを考える。",
+          "AIやツールを使うにしても、その土台になる基準や教育の仕組みが必要であることを共有する。"
+        ],
+        sharedReadout: "採用そのものより、『入った人が育ちやすい構造か』を一緒に見ています。",
+        tkcWays: [
+          "月次業務の流れに沿ってチェックポイントや役割分担をそろえ、仕事の型をつくる。",
+          "巡回監査や月次決算の流れを基準に、職員が育ちやすい工程と教えやすい順番を整理する。",
+          "AIや効率化ツールは、基準や型が整った後に乗せることで、品質と育成の両立を図りやすくする。",
+        ],
+        objections: [
+          { q: "人が採れないのが先で、型づくりまで手が回りません。", a: "そういう時ほど、採れた人が定着しやすい土台を先に整えておく意味が出やすいです。" },
+          { q: "結局は良い人を採れるか次第ではないですか。", a: "人の質は大切ですが、良い人でも基準が曖昧だと力を発揮しづらい面があります。" },
+          { q: "教育に時間をかける余裕がありません。", a: "だからこそ、教える内容が毎回変わらないように、仕事の流れに型を持つことが効きやすいです。" }
+        ],
+        nextActions: [
+          "どの業務が属人化しているかを棚卸しする。",
+          "月次業務の中で、職員に渡しやすい工程を整理する。",
+          "次回は、品質と育成を両立しやすい運用イメージを具体化する。"
+        ],
+        checkpoints: [
+          "採用課題と教育課題を分けて捉えられているか。",
+          "職員に任せると品質が落ちる理由が明確か。",
+          "基準がないままAIや効率化だけに期待していないか。"
+        ]
+      },
+      ai: {
+        label: "AIとの向き合い方",
+        summary: "AIへの関心が高まる中で、何を取り入れ、何を事務所の価値として握るかを整理することが大切になりやすい状態です。",
+        opening: "AIは大きな変化ですが、機能だけを追うより、『何をAIに任せて、何を事務所の価値として持つか』を先に整理した方がぶれにくくなります。",
+        topPoints: [
+          "AIの話を機能比較で終わらせず、事務所経営モデルの話に引き上げる。",
+          "入力や検索が軽くなる時代に、月次決算や顧問価値をどう位置づけるかを考える。",
+          "AIを使っても品質が崩れない基準や型が必要であることを共有する。"
+        ],
+        sharedReadout: "ここではAIを否定しているのではなく、AIをどう組み込むと事務所経営が安定しやすいかを一緒に見ています。",
+        tkcWays: [
+          "AIは議事録、情報整理、文案づくりなど周辺業務から活用し、中核の品質基準は事務所側で握る。",
+          "月次決算体制や巡回監査の流れを先に整え、AIを入れても品質がぶれにくい土台をつくる。",
+          "税務・会計・保証・経営助言のどこに人が価値を残すかを整理したうえで、AIの役割分担を決める。",
+        ],
+        objections: [
+          { q: "AIが進むと、税理士の価値は下がりませんか。", a: "一部の作業は軽くなりますが、その分、月次の数字をどう読み、どう支えるかの価値は整理しやすくなります。" },
+          { q: "まずは新しいAI機能を入れるべきでしょうか。", a: "機能を試すこと自体は有意義ですが、何の課題を解決するためかが先にあると判断しやすくなります。" },
+          { q: "人よりAIの方が重要になる気がします。", a: "AIは重要です。ただ、品質や責任の設計まで全部置き換えるわけではないので、役割分担をどう決めるかが鍵です。" }
+        ],
+        nextActions: [
+          "AIに期待している工程を具体化する。",
+          "AI導入の前に、品質基準や月次決算体制をどう整えるかを整理する。",
+          "次回は、AI時代の顧問価値と事務所経営の話を深掘りする。"
+        ],
+        checkpoints: [
+          "関心の中心が『機能』なのか『経営モデル』なのか。",
+          "AIに任せたい工程が明確か。",
+          "AIの話で月次決算や顧問価値の論点が消えていないか。"
+        ]
+      },
+      advisory: {
+        label: "経営助言の進め方",
+        summary: "処理能力の向上だけでなく、顧問先への関わり方や経営助言の深め方に関心が向いている状態です。",
+        opening: "処理が軽くなるほど、税理士として残る価値は『社長の意思決定をどう支えるか』に寄っていきます。ここは今後の事務所づくりで大切なテーマになりやすいです。",
+        topPoints: [
+          "税務・会計に加えて、毎月の数字をどう経営助言につなげるかを整理する。",
+          "自計化と月次決算体制が、経営助言の土台になることを共有する。",
+          "経営助言を先生個人のセンスだけでなく、事務所の型にできるかを考える。"
+        ],
+        sharedReadout: "ここでは『経営助言をやるべきか』より、『どうすれば毎月の数字とつながった形でやりやすくなるか』を見ています。",
+        tkcWays: [
+          "自計化と月次決算体制を土台にして、毎月比較できる数字が早く出る状態をつくる。",
+          "365日変動損益計算書や予実比較のように、毎月の対話につなげやすい数字の見せ方を取り入れる。",
+          "経営助言を先生個人の感覚だけでなく、巡回監査から対話へつながる事務所の型として整えていく。",
+        ],
+        objections: [
+          { q: "経営助言をしたいが、どこから始めればよいかわかりません。", a: "まずは毎月の数字が早く確定し、比較できることが前提になりやすいので、そこから逆算すると整理しやすいです。" },
+          { q: "職員までそこまで対応できるでしょうか。", a: "属人的にやろうとすると難しいですが、月次の流れに沿って型を持つと広げやすくなります。" },
+          { q: "顧問先が本当にそこまで求めていますか。", a: "全先が強く求めるわけではありませんが、意思決定を支える関わりがあるほど、顧問価値の説明はしやすくなります。" }
+        ],
+        nextActions: [
+          "経営助言を強めたい顧問先像を整理する。",
+          "月次で何を見て、何を話すかの流れを棚卸しする。",
+          "次回は、月次決算から助言へつなぐ運用イメージを具体化する。"
+        ],
+        checkpoints: [
+          "経営助言をしたい相手が具体的に見えているか。",
+          "毎月比較できる数字が早く出ているか。",
+          "先生個人以外にも広げられる型があるか。"
+        ]
+      }
+    };
+
+    function formData() {
+      return {
+        officeName: document.getElementById('officeName').value.trim(),
+        yearsOpen: document.getElementById('yearsOpen').value,
+        staffCount: document.getElementById('staffCount').value,
+        bookkeepingRatio: document.querySelector('input[name="bookkeepingRatio"]:checked')?.value || 'mid',
+        jikeikaRatio: document.querySelector('input[name="jikeikaRatio"]:checked')?.value || 'mid',
+        feeIssue: document.querySelector('input[name="feeIssue"]:checked')?.value || 'mid',
+        hiringIssue: document.querySelector('input[name="hiringIssue"]:checked')?.value || 'mid',
+        aiView: document.querySelector('input[name="aiView"]:checked')?.value || 'curious',
+        advisoryIntent: document.querySelector('input[name="advisoryIntent"]:checked')?.value || 'mid',
+        software: document.getElementById('software').value,
+        primaryPain: document.querySelector('input[name="primaryPain"]:checked')?.value || 'new_clients',
+        memo: document.getElementById('memo').value.trim()
+      };
+    }
+
+    function scoreForm(f) {
+      const s = { startup:0, bookkeeping:0, fee:0, hiring:0, ai:0, advisory:0 };
+
+      if (f.yearsOpen === '0-2') s.startup += 6;
+      if (f.yearsOpen === '3-5') s.startup += 5;
+      if (f.yearsOpen === '6-10') s.startup += 2;
+      if (f.staffCount === '0') s.startup += 2;
+      if (f.staffCount === '1-3') s.startup += 1;
+
+      if (f.bookkeepingRatio === 'high') s.bookkeeping += 6;
+      if (f.bookkeepingRatio === 'mid') s.bookkeeping += 3;
+      if (f.jikeikaRatio === 'low') s.bookkeeping += 4;
+      if (f.jikeikaRatio === 'mid') s.bookkeeping += 2;
+
+      if (f.feeIssue === 'high') s.fee += 6;
+      if (f.feeIssue === 'mid') s.fee += 3;
+      if (f.jikeikaRatio === 'high') s.fee += 1;
+      if (f.advisoryIntent === 'high') s.fee += 2;
+
+      if (f.hiringIssue === 'high') s.hiring += 6;
+      if (f.hiringIssue === 'mid') s.hiring += 3;
+      if (f.staffCount === '4-9') s.hiring += 2;
+      if (f.staffCount === '10+') s.hiring += 3;
+
+      if (f.aiView === 'anxious') s.ai += 7;
+      if (f.aiView === 'curious') s.ai += 4;
+      if (f.aiView === 'active') s.ai += 2;
+
+      if (f.advisoryIntent === 'high') s.advisory += 7;
+      if (f.advisoryIntent === 'mid') s.advisory += 4;
+      if (f.jikeikaRatio === 'high') s.advisory += 2;
+      if (f.bookkeepingRatio === 'low') s.advisory += 1;
+
+      switch (f.primaryPain) {
+        case 'fee': s.fee += 5; break;
+        case 'bookkeeping': s.bookkeeping += 5; break;
+        case 'hiring': s.hiring += 5; break;
+        case 'ai': s.ai += 5; break;
+        case 'advisory': s.advisory += 5; break;
+        case 'new_clients': s.startup += 2; s.fee += 2; break;
+      }
+
+      if (f.software === 'freee' || f.software === 'moneyforward') s.ai += 1;
+      if (f.software === 'yayoi') s.bookkeeping += 1;
+
+      return s;
+    }
+
+    function sortScores(scores) {
+      return Object.entries(scores).sort((a,b) => b[1] - a[1]);
+    }
+
+    function labelPrimaryPain(val){
+      const map = {
+        new_clients:'新規獲得・営業', fee:'顧問料単価', bookkeeping:'記帳代行負荷', hiring:'採用・育成', ai:'AI活用の整理', advisory:'経営助言強化'
+      };
+      return map[val] || val;
+    }
+
+    function stripEnd(text){
+      return text.replace(/。$/,'');
+    }
+
+    function buildSharedSummary(f, primaryKey, secondaryKey){
+      const p = TYPE_CONTENT[primaryKey];
+      const s = TYPE_CONTENT[secondaryKey];
+      const name = f.officeName ? `${f.officeName}について整理した内容` : '本日の共有内容';
+      return `${name}\n\n【今の中心テーマ】\n${p.label}\n\n【まず共有したこと】\n${p.opening}\n\n【次に整理したいこと】\n1. ${p.topPoints[0]}\n2. ${p.topPoints[1]}\n3. ${p.topPoints[2]}\n\n【あわせて見えていること】\n${s.label}の要素もあり、あわせて整理すると全体像が見えやすくなります。\n\n【参考になりやすい進め方】
+・${p.tkcWays[0]}
+・${p.tkcWays[1]}
+
+【今日の補足メモ】\n${f.memo || '（特記事項なし）'}`;
+    }
+
+    function buildFollowup(f, primaryKey, secondaryKey) {
+      const primary = TYPE_CONTENT[primaryKey];
+      const secondary = TYPE_CONTENT[secondaryKey];
+      const name = f.officeName || '先生';
+      return `本日はありがとうございました。\n\n${name}のお話を伺い、特に「${labelPrimaryPain(f.primaryPain)}」の論点が現在の重要テーマだと感じました。\n\n本日の整理としては、まず ${stripEnd(primary.opening)} という点が中心論点になります。加えて、関連するテーマとして ${secondary.label} も見えており、\n・${primary.topPoints[0]}\n・${primary.topPoints[1]}\n・${secondary.topPoints[0]}\nの順で整理していくのが有効だと考えています。\n\n次回は、\n1. ${primary.nextActions[0]}\n2. ${primary.nextActions[1]}\n3. ${primary.nextActions[2]}\nを中心に、より具体的な運用イメージまで共有できればと思います。\n\n引き続きよろしくお願いいたします。`;
+    }
+
+    function buildTalkSummary(primaryKey, secondaryKey) {
+      const p = TYPE_CONTENT[primaryKey];
+      const s = TYPE_CONTENT[secondaryKey];
+      return `【中心テーマ】${p.label}\n【関連テーマ】${s.label}\n\n【まず共有したいこと】\n${p.opening}\n\n【優先論点】\n1. ${p.topPoints[0]}\n2. ${p.topPoints[1]}\n3. ${p.topPoints[2]}`;
+    }
+
+    function renderResult() {
+      const f = formData();
+      const scores = scoreForm(f);
+      const sorted = sortScores(scores);
+      const primaryKey = sorted[0][0];
+      const secondaryKey = sorted[1][0];
+      const primary = TYPE_CONTENT[primaryKey];
+      const secondary = TYPE_CONTENT[secondaryKey];
+
+      document.getElementById('emptyState').style.display = 'none';
+      document.getElementById('resultArea').style.display = 'block';
+      document.getElementById('headline').textContent = `今、優先して整理したいテーマは「${primary.label}」です`;
+      document.getElementById('typeSummary').textContent = `${primary.summary} 関連するテーマとして「${secondary.label}」も見えており、順番を意識して整理すると全体像が見えやすくなりそうです。`;
+      document.getElementById('openingLine').textContent = primary.opening;
+      document.getElementById('sharedReadout').textContent = primary.sharedReadout;
+
+      document.getElementById('badgeRow').innerHTML = `
+        <span class="badge">今の中心テーマ：${primary.label}</span>
+        <span class="badge">あわせて見えていること：${secondary.label}</span>
+        <span class="badge">主な関心：${labelPrimaryPain(f.primaryPain)}</span>
+      `;
+
+      document.getElementById('topPoints').innerHTML = primary.topPoints.map(item => `<li>${item}</li>`).join('');
+      document.getElementById('tkcWays').innerHTML = primary.tkcWays.map(item => `<li>${item}</li>`).join('');
+      document.getElementById('objections').innerHTML = primary.objections.map(item => `
+        <div class="objection">
+          <strong>Q. ${item.q}</strong>
+          <div>${item.a}</div>
+        </div>
+      `).join('');
+      document.getElementById('nextActions').innerHTML = primary.nextActions.map(item => `<li>${item}</li>`).join('');
+      document.getElementById('checkpoints').innerHTML = primary.checkpoints.map(item => `<li>${item}</li>`).join('');
+      document.getElementById('sharedSummary').value = buildSharedSummary(f, primaryKey, secondaryKey);
+      document.getElementById('followupText').value = buildFollowup(f, primaryKey, secondaryKey);
+      document.getElementById('notesPad').value = f.memo || `${f.officeName ? f.officeName + "\n" : ""}中心テーマ：${primary.label}\n関連テーマ：${secondary.label}\n\nメモ：`;
+
+      window.__talkSummary = buildTalkSummary(primaryKey, secondaryKey);
+      window.__currentState = { form:f, scores, sorted, primaryKey, secondaryKey };
+    }
+
+    function saveForm() {
+      const data = formData();
+      localStorage.setItem('tkc_navi_shared_form', JSON.stringify(data));
+      alert('入力内容を保存しました。');
+    }
+
+    function loadForm() {
+      const raw = localStorage.getItem('tkc_navi_shared_form');
+      if (!raw) return;
+      const data = JSON.parse(raw);
+      Object.keys(data).forEach(key => {
+        if (["bookkeepingRatio","jikeikaRatio","feeIssue","hiringIssue","aiView","advisoryIntent","primaryPain"].includes(key)) {
+          const radio = document.querySelector(`input[name="${key}"][value="${data[key]}"]`);
+          if (radio) radio.checked = true;
+          return;
+        }
+        const el = document.getElementById(key);
+        if (el) el.value = data[key];
+      });
+    }
+
+    function resetForm() {
+      if (!confirm('入力内容をリセットしますか？')) return;
+      document.getElementById('intakeForm').reset();
+      document.getElementById('book-mid').checked = true;
+      document.getElementById('jikei-mid').checked = true;
+      document.getElementById('fee-mid').checked = true;
+      document.getElementById('hire-mid').checked = true;
+      document.getElementById('ai-curious').checked = true;
+      document.getElementById('adv-mid').checked = true;
+      document.getElementById('pain-start').checked = true;
+      document.getElementById('emptyState').style.display = 'block';
+      document.getElementById('resultArea').style.display = 'none';
+      localStorage.removeItem('tkc_navi_shared_form');
+    }
+
+    function copyText(text) {
+      navigator.clipboard.writeText(text).then(() => {
+        alert('コピーしました。');
+      }).catch(() => {
+        alert('コピーに失敗しました。');
+      });
+    }
+
+    document.getElementById('analyzeBtn').addEventListener('click', renderResult);
+    document.getElementById('saveBtn').addEventListener('click', saveForm);
+    document.getElementById('resetBtn').addEventListener('click', resetForm);
+    document.getElementById('copySharedBtn').addEventListener('click', () => copyText(document.getElementById('sharedSummary').value));
+    document.getElementById('copyFollowBtn').addEventListener('click', () => copyText(document.getElementById('followupText').value));
+    document.getElementById('copyTalkBtn').addEventListener('click', () => copyText(window.__talkSummary || ''));
+    document.getElementById('printBtn').addEventListener('click', () => window.print());
+    document.getElementById('saveNotesBtn').addEventListener('click', () => {
+      const existing = formData();
+      existing.memo = document.getElementById('notesPad').value;
+      localStorage.setItem('tkc_navi_shared_form', JSON.stringify(existing));
+      alert('メモを保存しました。');
+    });
+
+    loadForm();
+  </script>
+</body>
+</html>
