@@ -874,7 +874,34 @@ ${p.opening}
 3. ${p.topPoints[2]}`;
     }
 
-    function buildScgHints(f) {
+    const JOIN_SOLUTION_POINTS = {
+      startup: {
+        tkcSystem: "月次巡回監査と365日変動損益計算書を起点に、開業初期から『毎月の確認と助言』が回る運用をつくりやすい。",
+        tkcGroup: "TKC全国会の実践事例や運用モデルを参照し、事務所の基本動作（顧問先対応・品質基準）を早期に型化しやすい。"
+      },
+      bookkeeping: {
+        tkcSystem: "自計化支援と月次決算体制をセットで進めることで、入力代行中心から『数字を見て支える』関与へ移しやすい。",
+        tkcGroup: "TKC全国会の会員ネットワークを通じて、自計化推進や業務配分見直しの進め方を実務レベルで参考にできる。"
+      },
+      fee: {
+        tkcSystem: "巡回監査・月次決算・比較資料を毎月の提供価値として示しやすく、顧問料の説明軸を『作業』から『確認と意思決定支援』へ移しやすい。",
+        tkcGroup: "TKC全国会の取り組みや会員事例を活用し、顧問価値の伝え方や報酬設計の説明ロジックを整えやすい。"
+      },
+      hiring: {
+        tkcSystem: "月次業務の標準フローやチェック観点をそろえやすく、職員教育と品質平準化を同時に進めやすい。",
+        tkcGroup: "TKC全国会の研修・情報共有を通じて、育成設計や体制づくりの知見を継続的に取り入れやすい。"
+      },
+      ai: {
+        tkcSystem: "まず月次決算体制を安定させたうえでAIや効率化を重ねる設計にしやすく、品質を崩さずに活用を進めやすい。",
+        tkcGroup: "TKC全国会の動向共有や事例を通じて、AI活用の優先順位（守る業務・任せる業務）を判断しやすい。"
+      },
+      advisory: {
+        tkcSystem: "月次の比較資料と継続MASを活用し、税務中心の関与から経営助言までつなげる面談設計を行いやすい。",
+        tkcGroup: "TKC全国会の会員実践を参考に、経営助言の面談運用・提案テーマの組み立てを具体化しやすい。"
+      }
+    };
+
+    function buildScgHints(f, primaryKey) {
       const hints = [];
 
       if (f.software === 'freee' || f.software === 'moneyforward') {
@@ -898,6 +925,12 @@ ${p.opening}
 
       hints.push("話の展開は、①現状の運用負荷を確認 ②目指したい月次運用を言語化 ③現状との差分を共有 ④入会後に実現しやすくなる運用イメージを提示、の順で進めると自然です。");
       hints.push("入会に向けては、機能説明だけでなく『毎月の確認品質がそろうことで、顧問先への説明力と職員育成がどう変わるか』まで具体化して伝える。");
+
+      const solution = JOIN_SOLUTION_POINTS[primaryKey];
+      if (solution) {
+        hints.push(`この事務所の中心課題（${RADAR_META[primaryKey].label}）に対する解決策として、【TKCシステム】${solution.tkcSystem}`);
+        hints.push(`この事務所の中心課題（${RADAR_META[primaryKey].label}）に対する解決策として、【TKC全国会】${solution.tkcGroup}`);
+      }
 
       return hints;
     }
@@ -1005,7 +1038,7 @@ ${p.opening}
       document.getElementById('followupText').value = buildFollowup(f, primaryKey, secondaryKey);
       document.getElementById('notesPad').value = f.memo || `${f.officeName ? f.officeName + "\n" : ""}優先テーマ：${primary.label}\n関連テーマ：${secondary.label}\n\nメモ：`;
 
-      const hints = buildScgHints(f);
+      const hints = buildScgHints(f, primaryKey);
       const hintArea = document.getElementById('scgHintArea');
       const hintText = document.getElementById('scgHintText');
       if (hints.length > 0) {
