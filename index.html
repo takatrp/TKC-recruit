@@ -470,7 +470,7 @@
               <summary>面談メモ・システム環境別の確認ポイント</summary>
               <div style="margin-top:12px">
                 <div id="scgHintArea" class="callout" style="display:none;">
-                  <strong style="color:var(--brand-2);">現在のシステム環境から見た確認ポイント</strong>
+                  <strong style="color:var(--brand-2);">現在のシステム環境から見た確認ポイント（入会に向けた進め方）</strong>
                   <div id="scgHintText" style="font-size:13px; margin-top:6px;"></div>
                 </div>
 
@@ -895,6 +895,9 @@ ${p.opening}
       } else if (f.taxSoftware === 'jdl' || f.taxSoftware === 'mjs') {
         hints.push("税務ソフトまで含めたシステム基盤がある場合、今後の職員育成や経営助言への展開をどこまで意識しているか確認する。");
       }
+
+      hints.push("話の展開は、①現状の運用負荷を確認 ②目指したい月次運用を言語化 ③現状との差分を共有 ④入会後に実現しやすくなる運用イメージを提示、の順で進めると自然です。");
+      hints.push("入会に向けては、機能説明だけでなく『毎月の確認品質がそろうことで、顧問先への説明力と職員育成がどう変わるか』まで具体化して伝える。");
 
       return hints;
     }
