@@ -51,16 +51,6 @@
     }
     .hero h1{margin:0 0 10px;font-size:clamp(28px,4vw,42px);line-height:1.15}
     .hero p{margin:0;color:rgba(255,255,255,.92);max-width:860px}
-    .hero-grid{display:grid;grid-template-columns:1.3fr .9fr;gap:14px;margin-top:18px}
-    .hero-card{
-      background:rgba(255,255,255,.12);
-      border:1px solid rgba(255,255,255,.18);
-      border-radius:18px;
-      padding:14px 16px;
-      backdrop-filter: blur(8px);
-    }
-    .hero-card strong{display:block;font-size:13px;margin-bottom:4px}
-    .hero-card .small{font-size:13px;color:rgba(255,255,255,.9)}
 
     .layout{display:grid;grid-template-columns:1fr 1fr;gap:18px;align-items:start}
     .card{
@@ -157,8 +147,18 @@
     summary{cursor:pointer;font-weight:800}
     .footer-note{margin-top:10px;font-size:12px;color:var(--muted)}
 
+    .summary-display{
+      white-space:pre-wrap;
+      background:#f9fbff;
+      padding:12px;
+      border:1px solid #e3ebf8;
+      border-radius:12px;
+      font-size:14px;
+      line-height:1.75;
+    }
+
     @media (max-width:980px){
-      .layout,.hero-grid,.two-col{grid-template-columns:1fr}
+      .layout,.two-col{grid-template-columns:1fr}
       .result-card{position:static}
     }
     @media (max-width:640px){
@@ -171,11 +171,40 @@
       button,.btn{width:100%}
     }
     @media print{
-      body{background:#fff}
-      .hero{background:#fff !important;color:#000;border:1px solid #ccc;box-shadow:none}
-      .hero-card,.actions,details{display:none !important}
+      *{
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+      }
+      body{background:#fff !important}
+      .wrap{max-width:none;padding:0}
+      .hero{
+        background:#f5f7fb !important;
+        color:#1b2430 !important;
+        border:1px solid #dbe3f0;
+        box-shadow:none;
+        margin-bottom:12px;
+      }
+      .hero p,.eyebrow{color:#1b2430 !important}
       .layout{grid-template-columns:1fr}
-      .card{box-shadow:none;border:1px solid #ccc}
+      .layout > section:first-child{display:none !important}
+      .card{
+        box-shadow:none;
+        border:1px solid #dbe3f0;
+      }
+      .result-card{position:static;top:auto}
+      .actions,
+      .copy-row,
+      details,
+      #emptyState,
+      button,
+      .btn{
+        display:none !important;
+      }
+      textarea{height:auto;min-height:0}
+      .section,.summary-intro,.radar-box,.callout{
+        break-inside:avoid;
+        page-break-inside:avoid;
+      }
     }
   </style>
 </head>
@@ -239,18 +268,18 @@
                 <div class="field">
                   <label class="main">記帳代行の比率</label>
                   <div class="chip-grid">
-                    <div class="choice"><input id="book-high" type="radio" name="bookkeepingRatio" value="high"><label for="book-high">かなり高い</label></div>
-                    <div class="choice"><input id="book-mid" type="radio" name="bookkeepingRatio" value="mid" checked><label for="book-mid">中くらい</label></div>
-                    <div class="choice"><input id="book-low" type="radio" name="bookkeepingRatio" value="low"><label for="book-low">低い</label></div>
+                    <div class="choice"><input id="book-high" type="radio" name="bookkeepingRatio" value="high"><label for="book-high">かなり高い（8割〜）</label></div>
+                    <div class="choice"><input id="book-mid" type="radio" name="bookkeepingRatio" value="mid" checked><label for="book-mid">中くらい（4〜6割程度）</label></div>
+                    <div class="choice"><input id="book-low" type="radio" name="bookkeepingRatio" value="low"><label for="book-low">低い（2割以下）</label></div>
                     <div class="choice"><input id="book-mixed" type="radio" name="bookkeepingRatio" value="mid"><label for="book-mixed">顧問先によって差が大きい</label></div>
                   </div>
                 </div>
                 <div class="field">
                   <label class="main">自計化の比率</label>
                   <div class="chip-grid">
-                    <div class="choice"><input id="jikei-low" type="radio" name="jikeikaRatio" value="low"><label for="jikei-low">低い</label></div>
-                    <div class="choice"><input id="jikei-mid" type="radio" name="jikeikaRatio" value="mid" checked><label for="jikei-mid">中くらい</label></div>
-                    <div class="choice"><input id="jikei-high" type="radio" name="jikeikaRatio" value="high"><label for="jikei-high">高い</label></div>
+                    <div class="choice"><input id="jikei-low" type="radio" name="jikeikaRatio" value="low"><label for="jikei-low">低い（2割以下）</label></div>
+                    <div class="choice"><input id="jikei-mid" type="radio" name="jikeikaRatio" value="mid" checked><label for="jikei-mid">中くらい（4〜6割程度）</label></div>
+                    <div class="choice"><input id="jikei-high" type="radio" name="jikeikaRatio" value="high"><label for="jikei-high">高い（8割〜）</label></div>
                     <div class="choice"><input id="jikei-growing" type="radio" name="jikeikaRatio" value="mid"><label for="jikei-growing">これから増やしたい</label></div>
                   </div>
                 </div>
@@ -327,9 +356,23 @@
                     <option value="other">その他・複数利用</option>
                     <option value="freee">freee</option>
                     <option value="moneyforward">マネーフォワード</option>
-                    <option value="yayoi">弥生</option>
+                    <option value="yayoi">弥生会計</option>
                     <option value="jdl">JDL</option>
                     <option value="mjs">MJS</option>
+                    <option value="kanjo">勘定奉行</option>
+                  </select>
+                </div>
+                <div class="field">
+                  <label class="main" for="taxSoftware">現在主に使っている税務ソフト</label>
+                  <select id="taxSoftware" name="taxSoftware">
+                    <option value="other">その他・複数利用</option>
+                    <option value="tatsujin">達人</option>
+                    <option value="jdl">JDL</option>
+                    <option value="mjs">MJS税務DX</option>
+                    <option value="mahotsujin">魔法陣</option>
+                    <option value="yayoi">弥生</option>
+                    <option value="freee-tax">freee申告</option>
+                    <option value="mf-tax">マネーフォワード クラウド申告</option>
                   </select>
                 </div>
                 <div class="field">
@@ -357,7 +400,7 @@
           <div id="emptyState" class="placeholder">
             左側の質問に答えて「この内容で整理する」を押すと、ここに現在地と、次に整理するとよさそうな論点が表示されます。
           </div>
-<div id="resultArea" style="display:none">
+          <div id="resultArea" style="display:none">
             <div class="summary-intro">
               <strong id="headline">現在のテーマ</strong>
               <div id="typeSummary">ここに要約が表示されます。</div>
@@ -389,7 +432,6 @@
 
             <div class="section">
               <h4>このテーマで考えやすい進め方（例）</h4>
-              
               <ul class="plain-list" id="tkcWays"></ul>
             </div>
 
@@ -411,12 +453,12 @@
 
             <div class="section">
               <h4>本日の整理メモ（共有用）</h4>
-              <textarea id="sharedSummary" readonly></textarea>
+              <div id="sharedSummaryDisplay" class="summary-display"></div>
+              <input type="hidden" id="sharedSummaryHidden" />
               <div class="copy-row">
                 <button class="btn-secondary" type="button" id="copySharedBtn">まとめをコピー</button>
                 <button class="btn-secondary" type="button" id="printBtn">印刷</button>
               </div>
-              
             </div>
 
             <details>
@@ -436,7 +478,6 @@
                     <button class="btn-secondary" type="button" id="copyFollowBtn">フォロー文面をコピー</button>
                     <button class="btn-secondary" type="button" id="copyTalkBtn">整理メモをコピー</button>
                   </div>
-                  
                 </div>
               </div>
             </details>
@@ -457,11 +498,10 @@
           "月次決算体制と自計化を、事務所の土台としてどう位置づけるかを考える。",
           "入力業務だけに依存しない顧問価値を、早い段階からどうつくるかを共有する。"
         ],
-        sharedReadout: "開業初期ほど、個別の効率化だけでなく『どんな事務所をつくるか』を先に整理しておくことが大切になりやすい、という見立てです。",
         tkcWays: [
           "月次巡回監査を事務所の基本動作として置き、『毎月関与する事務所』という型を早めに固める。",
           "自計化を前提にしやすい顧問先から始め、入力代行中心ではない関わり方を少しずつ増やす。",
-          "365日変動損益計算書や継続MASなどを使い、毎月の数字を意思決定支援につなげる流れをつくる。",
+          "365日変動損益計算書や継続MASなどを使い、毎月の数字を意思決定支援につなげる流れをつくる。"
         ],
         objections: [
           { q: "まだ売上づくりが先で、そこまで考える余裕がありません。", a: "その感覚は自然です。ただ、最初に方向を決めておくほど、後から無理のある受け方を減らしやすくなります。" },
@@ -488,11 +528,10 @@
           "自計化を進めることが、顧問先の数字の見え方や先生の時間の使い方にどう効くかを共有する。",
           "『入力を請け負う』価値から『毎月の数字を使って支える』価値へ、少しずつ軸を移せるかを考える。"
         ],
-        sharedReadout: "ここでは記帳代行の良し悪しを言っているのではなく、今後の業務配分としてこの比率感が合っているかを一緒に見ています。",
         tkcWays: [
           "自計化へ移しやすい顧問先から段階的に進め、記帳代行比率を一気にではなく計画的に見直す。",
           "月次決算体制を整え、入力が終わってからではなく毎月の数字で話せる関わり方へ寄せていく。",
-          "巡回監査・月次決算・比較資料をセットで回し、『数字が早く見えること』を顧問価値として説明しやすくする。",
+          "巡回監査・月次決算・比較資料をセットで回し、『数字が早く見えること』を顧問価値として説明しやすくする。"
         ],
         objections: [
           { q: "顧問先が自計化を嫌がることが多いです。", a: "その反応はよくあります。だからこそ、単なる手間の話ではなく、数字が早く見える意味まで伝えることが大切になります。" },
@@ -519,11 +558,10 @@
           "顧問料の説明を、申告や入力ではなく毎月の価値で話せるようにする。",
           "毎月の関わりを通じて、顧問先に見える価値をどう作るかを共有する。"
         ],
-        sharedReadout: "ここでの論点は『値上げのテクニック』より、顧問料の土台になる価値をどう見せるかです。",
         tkcWays: [
           "顧問料の説明軸を、申告や入力そのものではなく、月次決算・巡回監査・毎月の確認機能へ置き直す。",
           "365日変動損益計算書や比較資料を使い、顧問先が毎月受け取っている価値を見える形にしていく。",
-          "継続MASなども活用しながら、『数字をもとに一緒に考える事務所』という位置づけをつくる。",
+          "継続MASなども活用しながら、『数字をもとに一緒に考える事務所』という位置づけをつくる。"
         ],
         objections: [
           { q: "顧問先が価格に敏感で、なかなか上げにくいです。", a: "その感覚は自然です。だからこそ、価格だけでなく、毎月どんな価値を提供しているかが説明できるかが大切になります。" },
@@ -550,11 +588,10 @@
           "月次決算体制を軸に、職員が育ちやすい仕事の構造をつくれるかを考える。",
           "AIやツールを使うにしても、その土台になる基準や教育の仕組みが必要であることを共有する。"
         ],
-        sharedReadout: "採用そのものより、『入った人が育ちやすい構造か』を一緒に見ています。",
         tkcWays: [
           "月次業務の流れに沿ってチェックポイントや役割分担をそろえ、仕事の型をつくる。",
           "巡回監査や月次決算の流れを基準に、職員が育ちやすい工程と教えやすい順番を整理する。",
-          "AIや効率化ツールは、基準や型が整った後に乗せることで、品質と育成の両立を図りやすくする。",
+          "AIや効率化ツールは、基準や型が整った後に乗せることで、品質と育成の両立を図りやすくする。"
         ],
         objections: [
           { q: "人が採れないのが先で、型づくりまで手が回りません。", a: "そういう時ほど、採れた人が定着しやすい土台を先に整えておく意味が出やすいです。" },
@@ -581,11 +618,10 @@
           "入力や検索が軽くなる時代に、月次決算や顧問価値をどう位置づけるかを考える。",
           "AIを使っても品質が崩れない基準や型が必要であることを共有する。"
         ],
-        sharedReadout: "ここではAIを否定しているのではなく、AIをどう組み込むと事務所経営が安定しやすいかを一緒に見ています。",
         tkcWays: [
           "AIは議事録、情報整理、文案づくりなど周辺業務から活用し、中核の品質基準は事務所側で握る。",
           "月次決算体制や巡回監査の流れを先に整え、AIを入れても品質がぶれにくい土台をつくる。",
-          "税務・会計・保証・経営助言のどこに人が価値を残すかを整理したうえで、AIの役割分担を決める。",
+          "税務・会計・保証・経営助言のどこに人が価値を残すかを整理したうえで、AIの役割分担を決める。"
         ],
         objections: [
           { q: "AIが進むと、税理士の価値は下がりませんか。", a: "一部の作業は軽くなりますが、その分、月次の数字をどう読み、どう支えるかの価値は整理しやすくなります。" },
@@ -612,11 +648,10 @@
           "自計化と月次決算体制が、経営助言の土台になることを共有する。",
           "経営助言を先生個人のセンスだけでなく、事務所の型にできるかを考える。"
         ],
-        sharedReadout: "ここでは『経営助言をやるべきか』より、『どうすれば毎月の数字とつながった形でやりやすくなるか』を見ています。",
         tkcWays: [
           "自計化と月次決算体制を土台にして、毎月比較できる数字が早く出る状態をつくる。",
           "365日変動損益計算書や予実比較のように、毎月の対話につなげやすい数字の見せ方を取り入れる。",
-          "経営助言を先生個人の感覚だけでなく、巡回監査から対話へつながる事務所の型として整えていく。",
+          "経営助言を先生個人の感覚だけでなく、巡回監査から対話へつながる事務所の型として整えていく。"
         ],
         objections: [
           { q: "経営助言をしたいが、どこから始めればよいかわかりません。", a: "まずは毎月の数字が早く確定し、比較できることが前提になりやすいので、そこから逆算すると整理しやすいです。" },
@@ -636,6 +671,27 @@
       }
     };
 
+    const ACCOUNTING_SOFTWARE_LABELS = {
+      other: "その他・複数利用",
+      freee: "freee",
+      moneyforward: "マネーフォワード",
+      yayoi: "弥生会計",
+      jdl: "JDL",
+      mjs: "MJS",
+      kanjo: "勘定奉行"
+    };
+
+    const TAX_SOFTWARE_LABELS = {
+      other: "その他・複数利用",
+      tatsujin: "達人",
+      jdl: "JDL",
+      mjs: "MJS税務DX",
+      mahotsujin: "魔法陣",
+      yayoi: "弥生",
+      "freee-tax": "freee申告",
+      "mf-tax": "マネーフォワード クラウド申告"
+    };
+
     function formData() {
       return {
         officeName: document.getElementById('officeName').value.trim(),
@@ -648,6 +704,7 @@
         aiView: document.querySelector('input[name="aiView"]:checked')?.value || 'curious',
         advisoryIntent: document.querySelector('input[name="advisoryIntent"]:checked')?.value || 'mid',
         software: document.getElementById('software').value,
+        taxSoftware: document.getElementById('taxSoftware').value,
         primaryPain: document.querySelector('input[name="primaryPain"]:checked')?.value || 'new_clients',
         memo: document.getElementById('memo').value.trim()
       };
@@ -707,7 +764,12 @@
 
     function labelPrimaryPain(val){
       const map = {
-        new_clients:'新規獲得・営業', fee:'顧問料単価', bookkeeping:'記帳代行負荷', hiring:'採用・育成', ai:'AI活用の整理', advisory:'経営助言強化'
+        new_clients:'新規獲得・営業',
+        fee:'顧問料単価',
+        bookkeeping:'記帳代行負荷',
+        hiring:'採用・育成',
+        ai:'AI活用の整理',
+        advisory:'経営助言強化'
       };
       return map[val] || val;
     }
@@ -716,28 +778,84 @@
       return text.replace(/。$/,'');
     }
 
+    function buildToolLine(f){
+      const parts = [];
+      if (f.software && ACCOUNTING_SOFTWARE_LABELS[f.software]) {
+        parts.push(`会計ソフト：${ACCOUNTING_SOFTWARE_LABELS[f.software]}`);
+      }
+      if (f.taxSoftware && TAX_SOFTWARE_LABELS[f.taxSoftware]) {
+        parts.push(`税務ソフト：${TAX_SOFTWARE_LABELS[f.taxSoftware]}`);
+      }
+      return parts.join(" / ");
+    }
+
     function buildSharedSummary(f, primaryKey, secondaryKey){
       const p = TYPE_CONTENT[primaryKey];
       const s = TYPE_CONTENT[secondaryKey];
       const name = f.officeName ? `${f.officeName}について整理した内容` : '本日の共有内容';
-      return `${name}\n\n【今の中心テーマ】\n${p.label}\n\n【まず共有したこと】\n${p.opening}\n\n【次に整理したいこと】\n1. ${p.topPoints[0]}\n2. ${p.topPoints[1]}\n3. ${p.topPoints[2]}\n\n【あわせて見えていること】\n${s.label}の要素もあり、あわせて整理すると全体像が見えやすくなります。\n\n【参考になりやすい進め方】
+      const toolLine = buildToolLine(f);
+
+      return `${name}
+
+【今の中心テーマ】
+${p.label}
+
+【まず共有したこと】
+${p.opening}
+
+【次に整理したいこと】
+1. ${p.topPoints[0]}
+2. ${p.topPoints[1]}
+3. ${p.topPoints[2]}
+
+【あわせて見えていること】
+${s.label}の要素もあり、あわせて整理すると全体像が見えやすくなります。
+${toolLine ? `\n【現在の利用環境】\n${toolLine}` : ''}
+
+【参考になりやすい進め方】
 ・${p.tkcWays[0]}
 ・${p.tkcWays[1]}
 
-【今日の補足メモ】\n${f.memo || '（特記事項なし）'}`;
+【今日の補足メモ】
+${f.memo || '（特記事項なし）'}`;
     }
 
     function buildFollowup(f, primaryKey, secondaryKey) {
       const primary = TYPE_CONTENT[primaryKey];
       const secondary = TYPE_CONTENT[secondaryKey];
       const name = f.officeName || '先生';
-      return `本日はありがとうございました。\n\n${name}のお話を伺い、特に「${labelPrimaryPain(f.primaryPain)}」の論点が現在の重要テーマだと感じました。\n\n本日の整理としては、まず ${stripEnd(primary.opening)} という点が中心論点になります。加えて、関連するテーマとして ${secondary.label} も見えており、\n・${primary.topPoints[0]}\n・${primary.topPoints[1]}\n・${secondary.topPoints[0]}\nの順で整理していくのが有効だと考えています。\n\n次回は、\n1. ${primary.nextActions[0]}\n2. ${primary.nextActions[1]}\n3. ${primary.nextActions[2]}\nを中心に、より具体的な運用イメージまで共有できればと思います。\n\n引き続きよろしくお願いいたします。`;
+      return `本日はありがとうございました。
+
+${name}のお話を伺い、特に「${labelPrimaryPain(f.primaryPain)}」の論点が現在の重要テーマだと感じました。
+
+本日の整理としては、まず ${stripEnd(primary.opening)} という点が中心論点になります。加えて、関連するテーマとして ${secondary.label} も見えており、
+・${primary.topPoints[0]}
+・${primary.topPoints[1]}
+・${secondary.topPoints[0]}
+の順で整理していくのが有効だと考えています。
+
+次回は、
+1. ${primary.nextActions[0]}
+2. ${primary.nextActions[1]}
+3. ${primary.nextActions[2]}
+を中心に、より具体的な運用イメージまで共有できればと思います。
+
+引き続きよろしくお願いいたします。`;
     }
 
     function buildTalkSummary(primaryKey, secondaryKey) {
       const p = TYPE_CONTENT[primaryKey];
       const s = TYPE_CONTENT[secondaryKey];
-      return `【中心テーマ】${p.label}\n【関連テーマ】${s.label}\n\n【まず共有したいこと】\n${p.opening}\n\n【優先論点】\n1. ${p.topPoints[0]}\n2. ${p.topPoints[1]}\n3. ${p.topPoints[2]}`;
+      return `【中心テーマ】${p.label}
+【関連テーマ】${s.label}
+
+【まず共有したいこと】
+${p.opening}
+
+【優先論点】
+1. ${p.topPoints[0]}
+2. ${p.topPoints[1]}
+3. ${p.topPoints[2]}`;
     }
 
     const RADAR_META = {
@@ -835,7 +953,11 @@
       `).join('');
       document.getElementById('nextActions').innerHTML = primary.nextActions.map(item => `<li>${item}</li>`).join('');
       document.getElementById('checkpoints').innerHTML = primary.checkpoints.map(item => `<li>${item}</li>`).join('');
-      document.getElementById('sharedSummary').value = buildSharedSummary(f, primaryKey, secondaryKey);
+
+      const summaryText = buildSharedSummary(f, primaryKey, secondaryKey);
+      document.getElementById('sharedSummaryDisplay').textContent = summaryText;
+      document.getElementById('sharedSummaryHidden').value = summaryText;
+
       document.getElementById('followupText').value = buildFollowup(f, primaryKey, secondaryKey);
       document.getElementById('notesPad').value = f.memo || `${f.officeName ? f.officeName + "\n" : ""}中心テーマ：${primary.label}\n関連テーマ：${secondary.label}\n\nメモ：`;
 
@@ -890,7 +1012,7 @@
     document.getElementById('analyzeBtn').addEventListener('click', renderResult);
     document.getElementById('saveBtn').addEventListener('click', saveForm);
     document.getElementById('resetBtn').addEventListener('click', resetForm);
-    document.getElementById('copySharedBtn').addEventListener('click', () => copyText(document.getElementById('sharedSummary').value));
+    document.getElementById('copySharedBtn').addEventListener('click', () => copyText(document.getElementById('sharedSummaryHidden').value));
     document.getElementById('copyFollowBtn').addEventListener('click', () => copyText(document.getElementById('followupText').value));
     document.getElementById('copyTalkBtn').addEventListener('click', () => copyText(window.__talkSummary || ''));
     document.getElementById('printBtn').addEventListener('click', () => window.print());
