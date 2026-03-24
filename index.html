@@ -462,8 +462,13 @@
             </div>
 
             <details>
-              <summary>後日の整理用メモ</summary>
+              <summary>後日の整理用メモ・確認ポイント</summary>
               <div style="margin-top:12px">
+                <div id="scgHintArea" class="callout" style="display:none;">
+                  <strong style="color:var(--brand-2);">現在のシステム環境から見た確認ポイント</strong>
+                  <div id="scgHintText" style="font-size:13px; margin-top:6px;"></div>
+                </div>
+
                 <div class="section">
                   <h4>面談メモ</h4>
                   <textarea id="notesPad"></textarea>
@@ -471,6 +476,7 @@
                     <button class="btn-secondary" type="button" id="saveNotesBtn">メモを保存</button>
                   </div>
                 </div>
+
                 <div class="section">
                   <h4>フォロー文面たたき台</h4>
                   <textarea id="followupText"></textarea>
@@ -755,6 +761,9 @@
       if (f.software === 'freee' || f.software === 'moneyforward') s.ai += 1;
       if (f.software === 'yayoi') s.bookkeeping += 1;
 
+      if (f.taxSoftware === 'freee-tax' || f.taxSoftware === 'mf-tax') s.ai += 1;
+      if (f.taxSoftware === 'tatsujin' || f.taxSoftware === 'mahotsujin') s.bookkeeping += 1;
+
       return s;
     }
 
@@ -809,8 +818,10 @@ ${p.opening}
 3. ${p.topPoints[2]}
 
 【あわせて見えていること】
-${s.label}の要素もあり、あわせて整理すると全体像が見えやすくなります。
-${toolLine ? `\n【現在の利用環境】\n${toolLine}` : ''}
+${s.label}の要素もあり、あわせて整理すると全体像が見えやすくなります。${toolLine ? `
+
+【現在の利用環境】
+${toolLine}` : ''}
 
 【参考になりやすい進め方】
 ・${p.tkcWays[0]}
@@ -856,6 +867,31 @@ ${p.opening}
 1. ${p.topPoints[0]}
 2. ${p.topPoints[1]}
 3. ${p.topPoints[2]}`;
+    }
+
+    function buildScgHints(f) {
+      const hints = [];
+
+      if (f.software === 'freee' || f.software === 'moneyforward') {
+        hints.push("会計がクラウド型の場合、効率化は進んでいる前提で、月次の品質のそろえ方や、経営助言へのつなげ方をどう考えているか確認する。");
+        hints.push("入力効率化の先にある『顧問価値の見せ方』や『職員間の運用のそろえ方』がテーマになっていないか聞いてみる。");
+      } else if (f.software === 'yayoi') {
+        hints.push("会計が弥生の場合、現場での使いやすさを活かしながら、自計化やクラウド化を今後どう位置づけたいか確認する。");
+        hints.push("記帳代行との関係が、今後の業務配分や時間の使い方にどう影響しているか整理してみる。");
+      } else if (f.software === 'jdl' || f.software === 'mjs') {
+        hints.push("既存の仕組みがある前提で、月次決算体制や顧問価値の見せ方を今後どこまで強めたいかを確認する。");
+      }
+
+      if (f.taxSoftware === 'tatsujin' || f.taxSoftware === 'mahotsujin') {
+        hints.push("税務ソフトが専用機系・買い切り系に寄っている場合、会計から申告までのデータ連携や確認作業にどれくらい手間がかかっているか確認する。");
+        hints.push("月次の数字から申告までの流れを、今後どこまで一体的にしたいかを聞いてみる。");
+      } else if (f.taxSoftware === 'freee-tax' || f.taxSoftware === 'mf-tax') {
+        hints.push("税務もクラウド型の場合、効率化の先にある品質管理やチェック体制をどう整えているか確認する。");
+      } else if (f.taxSoftware === 'jdl' || f.taxSoftware === 'mjs') {
+        hints.push("税務ソフトまで含めて一定の仕組みがある場合、今後は職員育成や経営助言への広がりをどこまで意識しているか確認する。");
+      }
+
+      return hints;
     }
 
     const RADAR_META = {
@@ -960,6 +996,17 @@ ${p.opening}
 
       document.getElementById('followupText').value = buildFollowup(f, primaryKey, secondaryKey);
       document.getElementById('notesPad').value = f.memo || `${f.officeName ? f.officeName + "\n" : ""}中心テーマ：${primary.label}\n関連テーマ：${secondary.label}\n\nメモ：`;
+
+      const hints = buildScgHints(f);
+      const hintArea = document.getElementById('scgHintArea');
+      const hintText = document.getElementById('scgHintText');
+      if (hints.length > 0) {
+        hintText.innerHTML = hints.map(t => `・${t}`).join('<br><br>');
+        hintArea.style.display = 'block';
+      } else {
+        hintText.innerHTML = '';
+        hintArea.style.display = 'none';
+      }
 
       window.__talkSummary = buildTalkSummary(primaryKey, secondaryKey);
       window.__currentState = { form:f, scores, sorted, primaryKey, secondaryKey };
