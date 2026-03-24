@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <title>事務所づくり対話ナビ｜共有画面版</title>
+  <title>事務所づくり対話ナビ</title>
   <style>
     :root{
       --bg:#f5f7fb;
@@ -143,6 +143,13 @@
     .callout{padding:14px 16px;border-radius:16px;background:var(--amber);border:1px solid var(--amber-line);margin-bottom:14px}
     .micro{font-size:12px;color:var(--muted)}
     .two-col{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+
+    .radar-wrap{display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:center}
+    .radar-box{background:#f9fbff;border:1px solid #e3ebf8;border-radius:16px;padding:12px}
+    .radar-svg{width:100%;height:auto;display:block}
+    .radar-legend{margin:0;padding-left:18px}
+    .radar-legend li{margin:8px 0}
+    .radar-legend strong{color:var(--brand-2)}
     .copy-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
     .result-card{position:sticky;top:16px}
     .placeholder{padding:24px 18px;color:var(--muted)}
@@ -175,26 +182,16 @@
 <body>
   <div class="wrap">
     <section class="hero">
-      <div class="eyebrow">一緒に考えを整理する共有画面版</div>
+      <div class="eyebrow">事務所運営の整理に</div>
       <h1>事務所づくり対話ナビ</h1>
-      <p>先生と一緒に、いまの事務所運営とこれからの方向性を整理するための画面です。結論を急がず、いま気になっている悩みを起点に、月次決算体制・自計化・職員育成・経営助言など、今後の事務所づくりで大切になりやすい論点を自然に確認できる形にしています。</p>
-      <div class="hero-grid">
-        <div class="hero-card">
-          <strong>この画面でやること</strong>
-          <div class="small">ソフトの優劣をその場で決めるためではなく、今の事務所運営で何を優先して整えると前に進みやすいかを一緒に言葉にします。</div>
-        </div>
-        <div class="hero-card">
-          <strong>進め方</strong>
-          <div class="small">左の質問に答えると、右側に「今の事務所づくりで優先度が高そうなテーマ」「次に整理するとよさそうな順番」「考えやすい進め方の例」「よく出やすいご質問への考え方」が表示されます。</div>
-        </div>
-      </div>
+      <p>いまの事務所運営で気になっていることを起点に、月次決算体制・自計化・職員育成・経営助言など、今後の事務所づくりで大切になりやすい論点を整理できるようにしています。</p>
     </section>
 
     <div class="layout">
       <section class="card" aria-labelledby="form-title">
         <div class="panel-head">
           <h2 id="form-title">1. 事務所の現在地を整理する</h2>
-          <p>ここは先生と一緒に見ながら進める前提です。質問は少なめにし、現状を率直に選びやすい表現にしています。</p>
+          <p>いまの事務所の状況と、気になっていることを順番に整理します。</p>
         </div>
         <div class="panel-body">
           <form id="intakeForm">
@@ -354,21 +351,31 @@
       <section class="card result-card" aria-labelledby="result-title">
         <div class="panel-head">
           <h2 id="result-title">2. 今の事務所づくりで見えているテーマ</h2>
-          <p>一緒に画面を見ながら話を進めやすいよう、表現はできるだけ中立でやわらかくしています。必要に応じて、悩みに応じた進め方の例もあわせて表示します。</p>
+          <p>整理した内容に応じて、優先して話したいテーマと考え方を表示します。</p>
         </div>
         <div class="panel-body">
           <div id="emptyState" class="placeholder">
             左側の質問に答えて「この内容で整理する」を押すと、ここに現在地と、次に整理するとよさそうな論点が表示されます。
           </div>
-          <div class="micro">ここで出るのは段階の判定ではなく、いま優先して話し合いたいテーマの整理です。結論を一つに決めるというより、考えやすい進め方の選択肢を並べるためのものです。</div>
-
-          <div id="resultArea" style="display:none">
+<div id="resultArea" style="display:none">
             <div class="summary-intro">
               <strong id="headline">現在のテーマ</strong>
               <div id="typeSummary">ここに要約が表示されます。</div>
             </div>
 
             <div class="badge-row" id="badgeRow"></div>
+
+            <div class="section">
+              <h4>お悩みの広がり</h4>
+              <div class="radar-wrap">
+                <div class="radar-box">
+                  <svg id="radarChart" class="radar-svg" viewBox="0 0 320 320" aria-label="お悩みレーダーチャート"></svg>
+                </div>
+                <div>
+                  <ol class="radar-legend" id="concernList"></ol>
+                </div>
+              </div>
+            </div>
 
             <div class="section">
               <h4>この場で最初に共有したいこと</h4>
@@ -382,13 +389,8 @@
 
             <div class="section">
               <h4>このテーマで考えやすい進め方（例）</h4>
-              <p class="micro" style="margin-bottom:10px">ここでは結論を押しつけるのではなく、こういう悩みのときに整理しやすい進め方の例を並べています。TKCでは、次のような形で考えやすいことがあります。</p>
+              
               <ul class="plain-list" id="tkcWays"></ul>
-            </div>
-
-            <div class="callout">
-              <strong>この画面の見方</strong>
-              <div id="sharedReadout">ここでは「良し悪しの判定」ではなく、「何を先に整えると事務所づくりが進みやすいか」を共有しています。</div>
             </div>
 
             <div class="section">
@@ -414,7 +416,7 @@
                 <button class="btn-secondary" type="button" id="copySharedBtn">まとめをコピー</button>
                 <button class="btn-secondary" type="button" id="printBtn">印刷</button>
               </div>
-              <div class="footer-note">その場で共有しやすいよう、やわらかい表現でまとめています。</div>
+              
             </div>
 
             <details>
@@ -434,7 +436,7 @@
                     <button class="btn-secondary" type="button" id="copyFollowBtn">フォロー文面をコピー</button>
                     <button class="btn-secondary" type="button" id="copyTalkBtn">整理メモをコピー</button>
                   </div>
-                  <div class="micro">必要に応じて、面談後の整理や共有にお使いください。</div>
+                  
                 </div>
               </div>
             </details>
@@ -738,6 +740,69 @@
       return `【中心テーマ】${p.label}\n【関連テーマ】${s.label}\n\n【まず共有したいこと】\n${p.opening}\n\n【優先論点】\n1. ${p.topPoints[0]}\n2. ${p.topPoints[1]}\n3. ${p.topPoints[2]}`;
     }
 
+    const RADAR_META = {
+      startup: { label: '事務所の土台づくり', short: '土台づくり', max: 10 },
+      bookkeeping: { label: '業務配分の見直し', short: '業務配分', max: 15 },
+      fee: { label: '顧問価値の見せ方', short: '顧問価値', max: 15 },
+      hiring: { label: '体制づくりと育成', short: '体制・育成', max: 15 },
+      ai: { label: 'AIとの向き合い方', short: 'AI対応', max: 13 },
+      advisory: { label: '経営助言の進め方', short: '経営助言', max: 15 }
+    };
+
+    function polarPoint(cx, cy, radius, angleDeg) {
+      const rad = (angleDeg - 90) * Math.PI / 180;
+      return { x: cx + Math.cos(rad) * radius, y: cy + Math.sin(rad) * radius };
+    }
+
+    function renderRadar(scores) {
+      const svg = document.getElementById('radarChart');
+      const list = document.getElementById('concernList');
+      const keys = Object.keys(RADAR_META);
+      const cx = 160, cy = 160, outer = 110;
+      const levels = 5;
+      const angleStep = 360 / keys.length;
+
+      const gridPolys = [];
+      for (let level = 1; level <= levels; level++) {
+        const r = outer * (level / levels);
+        const pts = keys.map((k, i) => {
+          const p = polarPoint(cx, cy, r, i * angleStep);
+          return `${p.x.toFixed(1)},${p.y.toFixed(1)}`;
+        }).join(' ');
+        gridPolys.push(`<polygon points="${pts}" fill="none" stroke="#d9e3f3" stroke-width="1" />`);
+      }
+
+      const axes = keys.map((k, i) => {
+        const p = polarPoint(cx, cy, outer, i * angleStep);
+        const labelP = polarPoint(cx, cy, outer + 24, i * angleStep);
+        return `
+          <line x1="${cx}" y1="${cy}" x2="${p.x.toFixed(1)}" y2="${p.y.toFixed(1)}" stroke="#d9e3f3" stroke-width="1" />
+          <text x="${labelP.x.toFixed(1)}" y="${labelP.y.toFixed(1)}" text-anchor="middle" dominant-baseline="middle" font-size="11" fill="#4a5a73">${RADAR_META[k].short}</text>`;
+      }).join('');
+
+      const valuePoints = keys.map((k, i) => {
+        const max = RADAR_META[k].max;
+        const ratio = Math.max(0, Math.min(1, (scores[k] || 0) / max));
+        const p = polarPoint(cx, cy, outer * ratio, i * angleStep);
+        return { key: k, ratio, x: p.x, y: p.y };
+      });
+      const poly = valuePoints.map(p => `${p.x.toFixed(1)},${p.y.toFixed(1)}`).join(' ');
+      const dots = valuePoints.map(p => `<circle cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="3.5" fill="#2158a8" />`).join('');
+
+      svg.innerHTML = `
+        <rect x="0" y="0" width="320" height="320" fill="transparent"></rect>
+        ${gridPolys.join('')}
+        ${axes}
+        <polygon points="${poly}" fill="rgba(33,88,168,.18)" stroke="#2158a8" stroke-width="2" />
+        ${dots}
+      `;
+
+      const sorted = Object.entries(scores)
+        .map(([key, score]) => ({ key, score, ratio: Math.round(Math.max(0, Math.min(100, (score / RADAR_META[key].max) * 100)))}))
+        .sort((a,b) => b.score - a.score);
+      list.innerHTML = sorted.map(item => `<li><strong>${RADAR_META[item.key].label}</strong>：${item.ratio}%</li>`).join('');
+    }
+
     function renderResult() {
       const f = formData();
       const scores = scoreForm(f);
@@ -752,13 +817,13 @@
       document.getElementById('headline').textContent = `今、優先して整理したいテーマは「${primary.label}」です`;
       document.getElementById('typeSummary').textContent = `${primary.summary} 関連するテーマとして「${secondary.label}」も見えており、順番を意識して整理すると全体像が見えやすくなりそうです。`;
       document.getElementById('openingLine').textContent = primary.opening;
-      document.getElementById('sharedReadout').textContent = primary.sharedReadout;
 
       document.getElementById('badgeRow').innerHTML = `
         <span class="badge">今の中心テーマ：${primary.label}</span>
         <span class="badge">あわせて見えていること：${secondary.label}</span>
         <span class="badge">主な関心：${labelPrimaryPain(f.primaryPain)}</span>
       `;
+      renderRadar(scores);
 
       document.getElementById('topPoints').innerHTML = primary.topPoints.map(item => `<li>${item}</li>`).join('');
       document.getElementById('tkcWays').innerHTML = primary.tkcWays.map(item => `<li>${item}</li>`).join('');
