@@ -50,7 +50,12 @@
       margin-bottom:12px;
     }
     .hero h1{margin:0 0 10px;font-size:clamp(28px,4vw,42px);line-height:1.15}
-    .hero p{margin:0;color:rgba(255,255,255,.92);max-width:860px}
+    .hero p{
+      margin:0;
+      color:rgba(255,255,255,.92);
+      white-space:normal;
+      max-width:none;
+    }
 
     .layout{display:grid;grid-template-columns:1fr 1fr;gap:18px;align-items:start}
     .card{
@@ -457,7 +462,7 @@
               <input type="hidden" id="sharedSummaryHidden" />
               <div class="copy-row">
                 <button class="btn-secondary" type="button" id="copySharedBtn">まとめをコピー</button>
-                <button class="btn-secondary" type="button" id="printBtn">印刷</button>
+                <button class="btn-secondary" type="button" id="printBtn">印刷/PDF</button>
               </div>
             </div>
 
@@ -465,7 +470,7 @@
               <summary>後日の整理用メモ・確認ポイント</summary>
               <div style="margin-top:12px">
                 <div id="scgHintArea" class="callout" style="display:none;">
-                  <strong style="color:var(--brand-2);">現在のシステム環境から見た確認ポイント</strong>
+                  <strong style="color:var(--brand-2);">現在のシステム環境から見た確認ポイント（入会に向けた進め方）</strong>
                   <div id="scgHintText" style="font-size:13px; margin-top:6px;"></div>
                 </div>
 
@@ -557,21 +562,21 @@
       },
       fee: {
         label: "顧問価値の見せ方",
-        summary: "顧問料が上がりにくい時に、提供価値の見せ方や報酬設計を見直す余地がある状態です。",
-        opening: "顧問料が上がりにくい時は、能力の問題というより、『何に対して報酬をいただくのか』の見せ方が、まだ作業寄りになっていることが多いです。",
+        summary: "顧問料が上がりにくい場合は、提供価値の見せ方や報酬設計を見直す余地がある状態です。",
+        opening: "顧問料が上がりにくい背景には、能力の問題というより、『何に対して報酬をいただくのか』の伝え方が、まだ作業寄りになっているケースが多くあります。",
         topPoints: [
           "作業の対価から、月次決算や意思決定支援の対価へどう寄せていくかを整理する。",
           "顧問料の説明を、申告や入力ではなく毎月の価値で話せるようにする。",
           "毎月の関わりを通じて、顧問先に見える価値をどう作るかを共有する。"
         ],
         tkcWays: [
-          "顧問料の説明軸を、申告や入力そのものではなく、月次決算・巡回監査・毎月の確認機能へ置き直す。",
+          "顧問料の説明軸を、申告や入力そのものではなく、月次決算・巡回監査・毎月の確認機能へと置き直す。",
           "365日変動損益計算書や比較資料を使い、顧問先が毎月受け取っている価値を見える形にしていく。",
           "継続MASなども活用しながら、『数字をもとに一緒に考える事務所』という位置づけをつくる。"
         ],
         objections: [
-          { q: "顧問先が価格に敏感で、なかなか上げにくいです。", a: "その感覚は自然です。だからこそ、価格だけでなく、毎月どんな価値を提供しているかが説明できるかが大切になります。" },
-          { q: "うちも頑張っているつもりですが、単価に反映しません。", a: "頑張りがあることと、顧問先から見える価値として伝わっていることは別なので、そこを整理する余地があります。" },
+          { q: "顧問先が価格に敏感で、なかなか上げにくいです。", a: "その感覚は自然です。だからこそ、価格だけでなく、『毎月どのような価値を提供しているか』を説明できることが重要です。" },
+          { q: "うちも頑張っているつもりですが、単価に反映しません。", a: "努力していることと、その努力が顧問先に価値として伝わっていることは別です。そこを整理する余地があります。" },
           { q: "結局は地域相場の問題ではないですか。", a: "相場の影響はあります。ただ、相場の中でも説明しやすい価値を持てるかで差は出やすいです。" }
         ],
         nextActions: [
@@ -869,17 +874,47 @@ ${p.opening}
 3. ${p.topPoints[2]}`;
     }
 
-    function buildScgHints(f) {
+    const JOIN_SOLUTION_POINTS = {
+      startup: {
+        tkcSystem: "月次巡回監査と365日変動損益計算書を起点に、開業初期から『毎月の確認と助言』が回る運用をつくりやすい。",
+        tkcGroup: "TKC全国会の実践事例や運用モデルを参照し、事務所の基本動作（顧問先対応・品質基準）を早期に型化しやすい。"
+      },
+      bookkeeping: {
+        tkcSystem: "自計化支援と月次決算体制をセットで進めることで、入力代行中心から『数字を見て支える』関与へ移しやすい。",
+        tkcGroup: "TKC全国会の会員ネットワークを通じて、自計化推進や業務配分見直しの進め方を実務レベルで参考にできる。"
+      },
+      fee: {
+        tkcSystem: "巡回監査・月次決算・比較資料を毎月の提供価値として示しやすく、顧問料の説明軸を『作業』から『確認と意思決定支援』へ移しやすい。",
+        tkcGroup: "TKC全国会の取り組みや会員事例を活用し、顧問価値の伝え方や報酬設計の説明ロジックを整えやすい。"
+      },
+      hiring: {
+        tkcSystem: "月次業務の標準フローやチェック観点をそろえやすく、職員教育と品質平準化を同時に進めやすい。",
+        tkcGroup: "TKC全国会の研修・情報共有を通じて、育成設計や体制づくりの知見を継続的に取り入れやすい。"
+      },
+      ai: {
+        tkcSystem: "まず月次決算体制を安定させたうえでAIや効率化を重ねる設計にしやすく、品質を崩さずに活用を進めやすい。",
+        tkcGroup: "TKC全国会の動向共有や事例を通じて、AI活用の優先順位（守る業務・任せる業務）を判断しやすい。"
+      },
+      advisory: {
+        tkcSystem: "月次の比較資料と継続MASを活用し、税務中心の関与から経営助言までつなげる面談設計を行いやすい。",
+        tkcGroup: "TKC全国会の会員実践を参考に、経営助言の面談運用・提案テーマの組み立てを具体化しやすい。"
+      }
+    };
+
+    function buildScgHints(f, primaryKey) {
       const hints = [];
 
       if (f.software === 'freee' || f.software === 'moneyforward') {
         hints.push("会計がクラウド型の場合、効率化は進んでいる前提で、月次の品質のそろえ方や、経営助言へのつなげ方をどう考えているか確認する。");
         hints.push("入力効率化の先にある『顧問価値の見せ方』や『職員間の運用のそろえ方』がテーマになっていないか聞いてみる。");
+        hints.push("入会に向けた訴求ポイントとしては、『効率化の次の段階である月次品質の標準化』を置き、毎月の確認・比較までを一連で回せる体制を提案する。");
       } else if (f.software === 'yayoi') {
         hints.push("会計が弥生の場合、現場での使いやすさを活かしながら、自計化やクラウド化を今後どう位置づけたいか確認する。");
         hints.push("記帳代行との関係が、今後の業務配分や時間の使い方にどう影響しているか整理してみる。");
+        hints.push("入会に向けた訴求ポイントとしては、『入力中心の運用から月次決算中心の運用へ移ると、面談価値と単価説明がしやすくなる』点を押さえる。");
       } else if (f.software === 'jdl' || f.software === 'mjs') {
         hints.push("既存の仕組みがある前提で、月次決算体制や顧問価値の見せ方を今後どこまで強めたいかを確認する。");
+        hints.push("入会に向けた訴求ポイントとしては、『既存運用を活かしつつ、巡回監査・比較資料・月次確認の型を強めることで事務所全体の再現性を高められる』点を伝える。");
       }
 
       if (f.taxSoftware === 'tatsujin' || f.taxSoftware === 'mahotsujin') {
@@ -889,6 +924,15 @@ ${p.opening}
         hints.push("税務もクラウド型の場合、効率化の先にある品質管理やチェック体制をどう整えているか確認する。");
       } else if (f.taxSoftware === 'jdl' || f.taxSoftware === 'mjs') {
         hints.push("税務ソフトまで含めて一定の仕組みがある場合、今後は職員育成や経営助言への広がりをどこまで意識しているか確認する。");
+      }
+
+      hints.push("話の展開は、①現状の運用負荷を確認 ②目指したい月次運用を言語化 ③現状との差分を共有 ④入会後に実現しやすくなる運用イメージを提示、の順で進めると自然です。");
+      hints.push("入会に向けては、機能説明だけでなく『毎月の確認品質がそろうことで、顧問先への説明力と職員育成がどう変わるか』まで具体化して伝える。");
+
+      const solution = JOIN_SOLUTION_POINTS[primaryKey];
+      if (solution) {
+        hints.push(`この事務所の中心課題（${RADAR_META[primaryKey].label}）に対する解決策として、【TKCシステム】${solution.tkcSystem}`);
+        hints.push(`この事務所の中心課題（${RADAR_META[primaryKey].label}）に対する解決策として、【TKC全国会】${solution.tkcGroup}`);
       }
 
       return hints;
@@ -969,7 +1013,7 @@ ${p.opening}
       document.getElementById('emptyState').style.display = 'none';
       document.getElementById('resultArea').style.display = 'block';
       document.getElementById('headline').textContent = `今、優先して整理したいテーマは「${primary.label}」です`;
-      document.getElementById('typeSummary').textContent = `${primary.summary} 関連するテーマとして「${secondary.label}」も見えており、順番を意識して整理すると全体像が見えやすくなりそうです。`;
+      document.getElementById('typeSummary').textContent = `${primary.summary} 関連するテーマとして「${secondary.label}」も見えているため、順番を意識して整理すると、全体像が把握しやすくなります。`;
       document.getElementById('openingLine').textContent = primary.opening;
 
       document.getElementById('badgeRow').innerHTML = `
@@ -997,7 +1041,7 @@ ${p.opening}
       document.getElementById('followupText').value = buildFollowup(f, primaryKey, secondaryKey);
       document.getElementById('notesPad').value = f.memo || `${f.officeName ? f.officeName + "\n" : ""}中心テーマ：${primary.label}\n関連テーマ：${secondary.label}\n\nメモ：`;
 
-      const hints = buildScgHints(f);
+      const hints = buildScgHints(f, primaryKey);
       const hintArea = document.getElementById('scgHintArea');
       const hintText = document.getElementById('scgHintText');
       if (hints.length > 0) {
