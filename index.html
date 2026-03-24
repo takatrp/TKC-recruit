@@ -50,7 +50,12 @@
       margin-bottom:12px;
     }
     .hero h1{margin:0 0 10px;font-size:clamp(28px,4vw,42px);line-height:1.15}
-    .hero p{margin:0;color:rgba(255,255,255,.92);max-width:860px}
+    .hero p{
+      margin:0;
+      color:rgba(255,255,255,.92);
+      white-space:normal;
+      max-width:none;
+    }
 
     .layout{display:grid;grid-template-columns:1fr 1fr;gap:18px;align-items:start}
     .card{
@@ -457,7 +462,7 @@
               <input type="hidden" id="sharedSummaryHidden" />
               <div class="copy-row">
                 <button class="btn-secondary" type="button" id="copySharedBtn">まとめをコピー</button>
-                <button class="btn-secondary" type="button" id="printBtn">印刷</button>
+                <button class="btn-secondary" type="button" id="printBtn">印刷/PDF</button>
               </div>
             </div>
 
